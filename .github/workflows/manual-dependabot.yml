@@ -1,0 +1,33 @@
+name: Manual Dependabot Run
+
+on:
+  workflow_dispatch:
+    inputs:
+      package-ecosystem:
+        description: 'Package ecosystem to update (npm or github-actions)'
+        required: true
+        default: 'npm'
+        type: choice
+        options:
+          - npm
+          - github-actions
+
+jobs:
+  dependabot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Trigger Dependabot
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: "build(deps): manual dependabot update request"
+          content-filepath: .github/dependabot-manual-trigger.md
+          labels: dependencies, ${{ github.event.inputs.package-ecosystem }}
+
+      - name: Update dependency
+        run: |
+          echo "Dependabot will process your request soon."
+          echo "GitHub automatically runs Dependabot when new issues with specific formats are created."
+          echo "The issue we just created will trigger Dependabot for ${{ github.event.inputs.package-ecosystem }} dependencies." 
